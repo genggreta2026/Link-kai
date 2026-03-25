@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ChainGPT - Official Links</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    body {
+      background: #0a101a;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .header h1 {
+      font-size: 2.5rem;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .header p {
+      font-size: 1rem;
+      color: #8892a0;
+    }
+    /* Linktree links */
+    .links-container {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .link-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 18px 24px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .link-card:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(100, 180, 255, 0.5);
+      transform: translateY(-2px);
+    }
+    .link-card a {
+      color: #e0e0e0;
+      text-decoration: none;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .link-card a::before {
+      content: "→";
+      color: #64b4ff;
+    }
+    /* Robot container: fixed at TOP-RIGHT (adjust here!) */
+    #robot-container {
+      position: fixed;
+      top: 20px;    /* 改为 bottom:20px 就是右下角 */
+      right: 20px;  /* 改为 left:20px 就是左上角 */
+      width: 280px;
+      height: 360px;
+      z-index: 9999;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+  <!-- Your Linktree static content -->
+  <div class="header">
+    <h1>ChainGPT</h1>
+    <p>Your personal expert in all crypto & blockchain related topics</p>
+  </div>
+  <div class="links-container">
+    <div class="link-card"><a href="https://twitter.com/ChainGPT" target="_blank">Twitter / X</a></div>
+    <div class="link-card"><a href="https://t.me/ChainGPT" target="_blank">Telegram</a></div>
+    <div class="link-card"><a href="https://discord.gg/chaingpt" target="_blank">Discord</a></div>
+    <div class="link-card"><a href="https://github.com/ChainGPT" target="_blank">GitHub</a></div>
+    <div class="link-card"><a href="https://chaingpt.org" target="_blank">Official Website</a></div>
+    <div class="link-card"><a href="https://docs.chaingpt.org" target="_blank">Documentation</a></div>
+    <div class="link-card"><a href="https://medium.com/ChainGPT" target="_blank">Blog</a></div>
+  </div>
+
+  <!-- Robot container (floating on top) -->
+  <div id="robot-container"></div>
+
+  <!-- Three.js library -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <!-- Robot script -->
+  <script>
+    const container = document.getElementById('robot-container');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, 280/360, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(280, 360);
+    renderer.setClearColor(0, 0); // Transparent background
+    container.appendChild(renderer.domElement);
+
+    // Lights
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(5, 10, 7);
+    scene.add(dirLight);
+
+    // Robot group
+    const robot = new THREE.Group();
+    scene.add(robot);
+
+    // 1. Head (square + rainbow border)
+    const head = new THREE.Group();
+    const frameGeo = new THREE.BoxGeometry(1.6, 1.6, 0.2);
+    const frameMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      emissive: 0x222222,
+      metalness: 0.8,
+      roughness: 0.2
+    });
+    const frame = new THREE.Mesh(frameGeo, frameMat);
+    const screenGeo = new THREE.BoxGeometry(1.2, 1.2, 0.21);
+    const screenMat = new THREE.MeshStandardMaterial({ color: 0x111111 });
+    const screen = new THREE.Mesh(screenGeo, screenMat);
+    const eyeGeo = new THREE.SphereGeometry(0.12, 16, 16);
+    const eyeMat = new THREE.MeshStandardMaterial({ color: 0xeeeeee, emissive: 0x4488ff });
+    const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
+    leftEye.position.set(-0.25, 0.1, 0.11);
+    const rightEye = new THREE.Mesh(eyeGeo, eyeMat);
+    rightEye.position.set(0.25, 0.1, 0.11);
+    screen.add(leftEye);
+    screen.add(rightEye);
+    head.add(frame);
+    head.add(screen);
+    head.position.y = 2.2;
+    robot.add(head);
+
+    // 2. Body
+    const bodyGeo = new THREE.BoxGeometry(1, 1.2, 0.6);
+    const bodyMat = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, metalness: 0.3, roughness: 0.4 });
+    const body = new THREE.Mesh(bodyGeo, bodyMat);
+    body.position.y = 0.8;
+    robot.add(body);
+
+    // 3. Arms
+    const armGeo = new THREE.BoxGeometry(0.3, 0.8, 0.3);
+    const armMat = new THREE.MeshStandardMaterial({ color: 0xe0e0e0, metalness: 0.2, roughness: 0.5 });
+    const leftArm = new THREE.Mesh(armGeo, armMat);
+    leftArm.position.set(-0.8, 0.8, 0);
+    const rightArm = new THREE.Mesh(armGeo, armMat);
+    rightArm.position.set(0.8, 0.8, 0);
+    robot.add(leftArm);
+    robot.add(rightArm);
+
+    // 4. Legs
+    const legGeo = new THREE.BoxGeometry(0.3, 0.7, 0.3);
+    const legMat = new THREE.MeshStandardMaterial({ color: 0xe0e0e0, metalness: 0.2, roughness: 0.5 });
+    const leftLeg = new THREE.Mesh(legGeo, legMat);
+    leftLeg.position.set(-0.3, -0.2, 0);
+    const rightLeg = new THREE.Mesh(legGeo, legMat);
+    rightLeg.position.set(0.3, -0.2, 0);
+    robot.add(leftLeg);
+    robot.add(rightLeg);
+
+    // Rainbow glow effect
+    function updateRainbow() {
+      const time = Date.now() * 0.001;
+      const hue = (time * 0.2) % 1;
+      const color = new THREE.Color().setHSL(hue, 0.8, 0.6);
+      frame.material.emissive = color;
+    }
+
+    // Mouse follow effect
+    let targetRotationX = 0;
+    let targetRotationY = 0;
+    document.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth) * 2 - 1;
+      const y = -(e.clientY / window.innerHeight) * 2 + 1;
+      targetRotationY = x * 0.3;
+      targetRotationX = y * 0.2;
+    });
+
+    camera.position.z = 6;
+
+    // Animation loop
+    function animate() {
+      requestAnimationFrame(animate);
+      updateRainbow();
+      robot.rotation.x += (targetRotationX - robot.rotation.x) * 0.05;
+      robot.rotation.y += (targetRotationY - robot.rotation.y) * 0.05;
+      robot.position.y = Math.sin(Date.now() * 0.001) * 0.1;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Resize handler
+    window.onresize = () => {
+      camera.aspect = 280/360;
+      camera.updateProjectionMatrix();
+      renderer.setSize(280, 360);
+    };
+  </script>
+</body>
+</html>
